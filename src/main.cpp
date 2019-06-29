@@ -75,6 +75,7 @@ void (*ui_notify_user) (const char *frmt, ...);
 
 enum {
 	OPT_AUTO_TUNE = CHAR_MAX + 1,
+	OPT_AUTO_UNTUNE,
 	OPT_EXTECH,
 	OPT_DEBUG
 };
@@ -83,6 +84,7 @@ static const struct option long_options[] =
 {
 	/* These options set a flag. */
 	{"auto-tune",	no_argument,		NULL,		 OPT_AUTO_TUNE},
+	{"auto-untune",	no_argument,		NULL,		 OPT_AUTO_UNTUNE},
 	{"calibrate",	no_argument,		NULL,		 'c'},
 	{"csv",		optional_argument,	NULL,		 'C'},
 	{"debug",	no_argument,		&debug_learning, OPT_DEBUG},
@@ -454,6 +456,11 @@ int main(int argc, char **argv)
 			leave_powertop = 1;
 			ui_notify_user = ui_notify_user_console;
 			break;
+		case OPT_AUTO_UNTUNE:
+			auto_tune = 2;
+			leave_powertop = 1;
+			ui_notify_user = ui_notify_user_console;
+			break;
 		case 'c':
 			powertop_init(0);
 			calibrate();
@@ -545,7 +552,7 @@ int main(int argc, char **argv)
 		tuning_update_display();
 		show_tab(0);
 	} else {
-		auto_toggle_tuning();
+		auto_toggle_tuning(auto_tune);
 	}
 
 	while (!leave_powertop) {
